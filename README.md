@@ -1,55 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Name</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-        h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-        h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        code {
-            background-color: #f4f4f4;
-            padding: 5px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        pre code {
-            background-color: transparent;
-            padding: 0;
-            border-radius: 0;
-        }
-        ul, ol {
-            margin-bottom: 20px;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-    </style>
-</head>
-<body>
+
     <h1>Project Name</h1>
 
     <p>This project is a Django application.</p>
@@ -88,6 +37,3 @@
     <ul>
         <li>Python 3.10</li>
     </ul>
-
-</body>
-</html>
