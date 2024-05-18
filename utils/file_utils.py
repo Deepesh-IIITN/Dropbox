@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 class FileUtils:
     @staticmethod
@@ -28,3 +29,38 @@ class FileUtils:
                 destination.write(chunk)
 
         return file_path
+    
+    @staticmethod
+    def getAbsoluteFilePath(file_name):
+        # Define the directory where files will be saved
+        save_directory = 'assets/uploaded_files'
+
+        # Create the directory if it doesn't exist
+        os.makedirs(save_directory, exist_ok=True)
+
+        # Construct the full file path
+        file_path = os.path.join(save_directory, file_name)
+        return os.path.abspath(file_path)
+    
+    @staticmethod
+    def getFileMetaData(file_data):
+
+        #cuurent date time
+        current_datetime = datetime.now()
+        # Convert datetime to a number representation
+        datetime_number = str(int(current_datetime.timestamp()))
+        file_extention = file_data.name.split(".")
+
+        print(datetime_number, file_extention)
+
+        if len(file_extention) > 1:
+             file_extention = file_extention[1]
+        else:
+            file_extention = ""
+
+        return {
+            "file_name": datetime_number+"."+file_extention,
+            "size": file_data.size,
+            "file_type": file_data.content_type
+        }
+        

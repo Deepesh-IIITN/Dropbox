@@ -13,27 +13,20 @@ class FileUploadAPIView(APIView):
     def post(self, request):
         try:
             file_data = request.FILES.get('file')
-            file_name = file_data.name
-            file_size = file_data.size
-            file_type = file_data.content_type
+            file_meta_data = FileUtils.getFileMetaData(file_data)
             
             # Save file to local directory
-            FileUtils.save_file(file_data, file_name)
+            FileUtils.save_file(file_data, file_meta_data['file_name'])
             
-            # Save file metadata to database
-            postData = request.data.copy()
-            postData['file_name'] = file_name
-            postData['size'] = file_size
-            postData['file_type'] = file_type
-
-            serializer = FileSerializer(data=postData)
+            #save file meta data into DB
+            serializer = FileSerializer(data=file_meta_data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
-            print(ex)
-            return Response("Something went wrong", status=status.HTTP_400_BAD_REQUEST)
+            raise ex
+            return Response("Something went wrong", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class FileReadAPIView(APIView):
     def get(self, request, file_id):
@@ -43,6 +36,9 @@ class FileReadAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         serializer = FileSerializer(file)
+        file_data = serializer.data
+        file_data['file_path' ] = FileUtils.getAbsoluteFilePath(file_data['file_name'])
+        
         return Response(serializer.data)
 
 class FileUpdateAPIView(APIView):
@@ -58,20 +54,14 @@ class FileUpdateAPIView(APIView):
         new_file_data = request.FILES.get('file')
         if new_file_data:
             file_data = request.FILES.get('file')
-            file_name = file_data.name
-            file_size = file_data.size
-            file_type = file_data.content_type
-
-            # Save file to local directory
-            FileUtils.save_file(file_data, file_name)
             
-            # Save file metadata to database
-            postData = request.data.copy()
-            postData['file_name'] = file_name
-            postData['size'] = file_size
-            postData['file_type'] = file_type
-
-            serializer = FileSerializer(file, data=postData)
+            file_meta_data = FileUtils.getFileMetaData(file_data)
+            
+            # Save file to local directory
+            FileUtils.save_file(file_data, file_meta_data['file_name'])
+            
+            #save file meta data into DB
+            serializer = FileSerializer(file, data=file_meta_data)
 
             if serializer.is_valid():
                 serializer.save()
@@ -93,4 +83,10 @@ class FileListAPIView(APIView):
     def get(self, request):
         files = File.objects.all()
         serializer = FileSerializer(files, many=True)
-        return Response(serializer.data)
+        file_data = serializer.data
+        
+        #add file_path into response
+        for index in range(len(file_data)):
+            file_data[index]['file_path'] = FileUtils.getAbsoluteFilePath(file_data[index]['file_name'])
+
+        return Response(file_data)
